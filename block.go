@@ -3,10 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/gob"
 	"log"
 	"time"
-
-	"github.com/boltdb/bolt"
 )
 
 // 定义结构
@@ -85,59 +84,25 @@ func Uint64ToByte(num uint64) []byte {
 	Block.Hash = hash[:]
 }
 */
-// 引入区块链
-type BlockChain struct {
-	Db   *bolt.DB
-	Tail []byte //存储最后一个区块的哈希
-}
 
-const blockChainDb = "blockChain.db"
-const blockBucket = "blockBucket"
-
-func (Block *Block) toByte() []byte {
-	return []byte{}
-}
-
-func NewBlockChain() *BlockChain {
-	genesisBlock := InitBlock()
-	var lastHash []byte //最后一个块的哈希
-	db, err := bolt.Open(blockChainDb, 0600, nil)
+func (Block *Block) Serialize() []byte {
+	var buffer bytes.Buffer
+	enc := gob.NewEncoder(&buffer)
+	err := enc.Encode(&Block)
 	if err != nil {
-		log.Panic("打开数据库失败")
+		log.Panic("区块序列化失败")
 	}
-	//增 改
-	db.Update(func(tx *bolt.Tx) error {
-		bk := tx.Bucket([]byte(blockBucket))
-		if bk == nil {
-			//没有抽屉,需要创建
-			bk, err = tx.CreateBucket([]byte(blockBucket))
-			if err != nil {
-				log.Panic("创建bucket失败")
-			}
-			bk.Put(genesisBlock.Hash, genesisBlock.toByte())
-			lastHash = genesisBlock.Hash
-		} else {
-			lastHash = bk.Get([]byte("lastHashKey"))
-		}
-
-		return nil
-	})
-	defer db.Close()
-
-	return &BlockChain{
-		Db:   db,
-		Tail: lastHash,
-	}
-
+	return buffer.Bytes()
 }
 
-// 添加区块
-func (BlockChain *BlockChain) AddBlock(data string) {
-	// 前区块哈希
-	/* prevHash := BlockChain.Blocks[len(BlockChain.Blocks)-1].Hash
-	block := NewBlock(data, prevHash)
-	BlockChain.Blocks = append(BlockChain.Blocks, block) */
-
+func Deserialize(data []byte) Block {
+	des := gob.NewDecoder(bytes.NewReader(data))
+	var block Block
+	err := des.Decode(&block)
+	if err != nil {
+		log.Panic("区块反序列化失败")
+	}
+	return block
 }
 
 // 创世块
