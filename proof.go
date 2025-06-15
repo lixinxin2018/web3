@@ -47,7 +47,7 @@ func (ProofOfWork *ProofOfWork) Run() ([]byte, uint64) {
 		srcHash := sha256.Sum256(blockInfo)
 		temInt.SetBytes(srcHash[:])
 		if temInt.Cmp(ProofOfWork.Target) == -1 {
-			fmt.Printf("挖矿成功得到的Hash和Nonce是:%x%d", srcHash[:], nonce)
+			fmt.Printf("挖矿成功得到的Hash和Nonce是:%x%d\n", srcHash[:], nonce)
 			return destHash, nonce
 		} else {
 			nonce++

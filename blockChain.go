@@ -40,7 +40,6 @@ func NewBlockChain() *BlockChain {
 
 		return nil
 	})
-	defer db.Close()
 
 	return &BlockChain{
 		Db:   db,
