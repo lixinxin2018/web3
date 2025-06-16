@@ -35,7 +35,7 @@ func NewBlockChain() *BlockChain {
 			bk.Put([]byte("LastHashKey"), genesisBlock.Hash)
 			lastHash = genesisBlock.Hash
 		} else {
-			lastHash = bk.Get([]byte("lastHashKey"))
+			lastHash = bk.Get([]byte("LastHashKey"))
 		}
 
 		return nil
@@ -59,11 +59,11 @@ func (BlockChain *BlockChain) AddBlock(data string) {
 			log.Panic("bk不应该为空,请检查")
 		}
 		block := NewBlock(data, lastHash)
+		block.PrevHash = lastHash
 		bk.Put(block.Hash, block.Serialize())
 		//记录最后一个区块的哈希值
 		bk.Put([]byte("LastHashKey"), block.Hash)
 		BlockChain.Tail = block.Hash
 		return nil
 	})
-
 }

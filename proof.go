@@ -32,7 +32,6 @@ func NewProofOfWork(block *Block) *ProofOfWork {
 func (ProofOfWork *ProofOfWork) Run() ([]byte, uint64) {
 	block := ProofOfWork.Block
 	temInt := big.Int{}
-	var destHash []byte
 	var nonce uint64
 	for {
 		tmp := [][]byte{
@@ -48,7 +47,7 @@ func (ProofOfWork *ProofOfWork) Run() ([]byte, uint64) {
 		temInt.SetBytes(srcHash[:])
 		if temInt.Cmp(ProofOfWork.Target) == -1 {
 			fmt.Printf("挖矿成功得到的Hash和Nonce是:%x%d\n", srcHash[:], nonce)
-			return destHash, nonce
+			return srcHash[:], nonce
 		} else {
 			nonce++
 		}

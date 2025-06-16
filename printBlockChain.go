@@ -1,14 +1,14 @@
 package main
 
-func main() {
-	bc := NewBlockChain()
-	cli := CLI{
-		bc: bc,
-	}
-	cli.Run()
-	bc.Db.Close()
-	/* bc.AddBlock("李向王转账了50BIC")
-	it := bc.NewIterator()
+import "fmt"
+
+func (cli *CLI) AddBlock(data string) {
+	cli.bc.AddBlock(data)
+	fmt.Printf("添加区块成功\n")
+}
+
+func (cli *CLI) PrintBlockChain() {
+	it := cli.bc.NewIterator()
 	fmt.Println(it.Db, it.CurrentHashPointer)
 	for {
 		bl := it.Next()
@@ -25,5 +25,4 @@ func main() {
 			break
 		}
 	}
-	*/
 }
