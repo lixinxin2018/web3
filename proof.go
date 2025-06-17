@@ -38,7 +38,7 @@ func (ProofOfWork *ProofOfWork) Run() ([]byte, uint64) {
 			Uint64ToByte(block.Version),
 			block.PrevHash,
 			block.MerkeRoot,
-			block.Data,
+			//block.Transaction,
 			Uint64ToByte(block.Timestamp),
 			Uint64ToByte(ProofOfWork.Target.Uint64()),
 			Uint64ToByte(nonce)}

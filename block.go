@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"encoding/gob"
 	"log"
@@ -19,7 +20,7 @@ type Block struct {
 	//当前区块哈希值
 	Hash []byte
 	//数据
-	Data []byte
+	Transaction []*Transaction
 	//时间戳
 	Timestamp uint64
 	//难度目标值
@@ -29,16 +30,16 @@ type Block struct {
 }
 
 // 创建区块
-func NewBlock(data string, prevBlockHash []byte) *Block {
+func NewBlock(txs []*Transaction, prevBlockHash []byte) *Block {
 	block := Block{
-		Version:    00,
-		PrevHash:   prevBlockHash,
-		MerkeRoot:  []byte{},
-		Hash:       []byte{}, //TODO
-		Data:       []byte(data),
-		Timestamp:  uint64(time.Now().Unix()),
-		Difficulty: 0,
-		Nonce:      0,
+		Version:     00,
+		PrevHash:    prevBlockHash,
+		MerkeRoot:   []byte{},
+		Hash:        []byte{}, //TODO
+		Transaction: txs,
+		Timestamp:   uint64(time.Now().Unix()),
+		Difficulty:  0,
+		Nonce:       0,
 	}
 	//block.setHash()
 
@@ -48,6 +49,7 @@ func NewBlock(data string, prevBlockHash []byte) *Block {
 	block.Hash = hash
 	block.Nonce = nonce
 	block.Difficulty = pow.Target.Uint64()
+	block.MerkeRoot = block.MakeMerkeRoot()
 	return &block
 }
 
@@ -105,8 +107,12 @@ func Deserialize(data []byte) Block {
 	return block
 }
 
-// 创世块
-func InitBlock() *Block {
-	block := NewBlock("奖励老李50BIC", nil)
-	return block
+// 生成梅克儿根
+func (block *Block) MakeMerkeRoot() []byte {
+	var info []byte
+	for _, tx := range block.Transaction {
+		info = append(info, tx.TXID...)
+	}
+	hash := sha256.Sum256(info)
+	return hash[:]
 }

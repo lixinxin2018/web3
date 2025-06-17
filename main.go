@@ -1,29 +1,10 @@
 package main
 
 func main() {
-	bc := NewBlockChain()
+	bc := NewBlockChain("班长")
 	cli := CLI{
 		bc: bc,
 	}
 	cli.Run()
 	bc.Db.Close()
-	/* bc.AddBlock("李向王转账了50BIC")
-	it := bc.NewIterator()
-	fmt.Println(it.Db, it.CurrentHashPointer)
-	for {
-		bl := it.Next()
-		fmt.Printf("Version:%x\n", bl.Version)
-		fmt.Printf("PrevHash:%x\n", bl.PrevHash)
-		fmt.Printf("MerkeRoot:%x\n", bl.MerkeRoot)
-		fmt.Printf("Hash:%x\n", bl.Hash)
-		fmt.Printf("Data:%s\n", bl.Data)
-		fmt.Printf("Timestamp:%d\n", bl.Timestamp)
-		fmt.Printf("Timestamp:%d\n", bl.Difficulty)
-		fmt.Printf("Nonce:%d\n", bl.Nonce)
-		if bl.PrevHash == nil {
-			fmt.Println("区块链遍历结束")
-			break
-		}
-	}
-	*/
 }
